@@ -1,33 +1,42 @@
-/**
- * Subtle haptic feedback utility for tactile web experiences.
- * Uses the Vibration API where supported.
- */
+import { WebHaptics } from 'web-haptics';
+
+type Preset = 'light' | 'medium' | 'success' | 'selection' | 'warning' | 'error';
+
+let instance: WebHaptics | null = null;
+
+function getHaptics() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  instance ??= new WebHaptics();
+  return instance;
+}
+
+function trigger(preset: Preset) {
+  void getHaptics()?.trigger(preset);
+}
 
 export const haptics = {
-  /**
-   * A very light tap, used for general button presses.
-   */
-  light: () => {
-    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(10);
-    }
+  supported() {
+    return WebHaptics.isSupported;
   },
-
-  /**
-   * A slightly stronger tap, used for successful actions or completion.
-   */
-  medium: () => {
-    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(20);
-    }
+  light() {
+    trigger('light');
   },
-
-  /**
-   * A double tap, used for significant milestones or errors.
-   */
-  success: () => {
-    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate([15, 30, 15]);
-    }
+  medium() {
+    trigger('medium');
+  },
+  success() {
+    trigger('success');
+  },
+  selection() {
+    trigger('selection');
+  },
+  warning() {
+    trigger('warning');
+  },
+  error() {
+    trigger('error');
   },
 };

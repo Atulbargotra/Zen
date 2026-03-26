@@ -1,35 +1,37 @@
-import { ReactNode } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Home, List, CheckCircle, Settings, Menu, Plus } from 'lucide-react';
-import { haptics } from '../utils/haptics';
+import { ReactNode } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Home, List, CheckCircle, Settings, Menu, Plus } from "lucide-react";
+import { haptics } from "../utils/haptics";
 
 interface LayoutProps {
   children: ReactNode;
-  activeTab: 'home' | 'list' | 'check';
-  onTabChange: (tab: 'home' | 'list' | 'check') => void;
+  activeTab: "home" | "list" | "check";
+  onTabChange: (tab: "home" | "list" | "check") => void;
   onAddClick?: () => void;
   showAddButton?: boolean;
 }
 
-export default function Layout({ 
-  children, 
-  activeTab, 
-  onTabChange, 
+export default function Layout({
+  children,
+  activeTab,
+  onTabChange,
   onAddClick,
-  showAddButton = true 
+  showAddButton = true,
 }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-surface/80 backdrop-blur-xl border-b border-black/5">
         <div className="max-w-screen-xl mx-auto px-6 py-4 flex justify-between items-center">
-          <button className="p-2 hover:opacity-70 transition-opacity cubic-bezier-transition">
+          {/*<button className="p-2 hover:opacity-70 transition-opacity cubic-bezier-transition">
             <Menu size={24} strokeWidth={1.5} />
-          </button>
-          <h1 className="text-primary font-black tracking-tighter text-2xl">Zen Reminders</h1>
-          <button className="p-2 hover:opacity-70 transition-opacity cubic-bezier-transition">
+          </button>*/}
+          <h1 className="text-primary font-black tracking-tighter text-2xl">
+            Zen Reminders
+          </h1>
+          {/*<button className="p-2 hover:opacity-70 transition-opacity cubic-bezier-transition">
             <Settings size={24} strokeWidth={1.5} />
-          </button>
+          </button>*/}
         </div>
       </header>
 
@@ -67,30 +69,46 @@ export default function Layout({
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-10 pb-8 pt-4 bg-surface/70 backdrop-blur-xl border-t border-black/5 shadow-[0px_-10px_30px_rgba(0,0,0,0.03)]">
-        <button 
+        <button
           onClick={() => {
-            onTabChange('home');
+            onTabChange("home");
             haptics.light();
           }}
-          className={`p-3 rounded-full transition-all duration-500 ${activeTab === 'home' ? 'bg-primary text-on-primary scale-110' : 'text-on-surface-variant hover:scale-110'}`}
+          className={`p-3 rounded-full transition-all duration-500 ${
+            activeTab === "home"
+              ? "bg-primary text-on-primary scale-110"
+              : "text-on-surface-variant hover:scale-110"
+          }`}
         >
-          <Home size={24} fill={activeTab === 'home' ? 'currentColor' : 'none'} strokeWidth={1.5} />
+          <Home
+            size={24}
+            fill={activeTab === "home" ? "currentColor" : "none"}
+            strokeWidth={1.5}
+          />
         </button>
-        <button 
+        <button
           onClick={() => {
-            onTabChange('list');
+            onTabChange("list");
             haptics.light();
           }}
-          className={`p-3 rounded-full transition-all duration-500 ${activeTab === 'list' ? 'bg-primary text-on-primary scale-110' : 'text-on-surface-variant hover:scale-110'}`}
+          className={`p-3 rounded-full transition-all duration-500 ${
+            activeTab === "list"
+              ? "bg-primary text-on-primary scale-110"
+              : "text-on-surface-variant hover:scale-110"
+          }`}
         >
           <List size={24} strokeWidth={1.5} />
         </button>
-        <button 
+        <button
           onClick={() => {
-            onTabChange('check');
+            onTabChange("check");
             haptics.light();
           }}
-          className={`p-3 rounded-full transition-all duration-500 ${activeTab === 'check' ? 'bg-primary text-on-primary scale-110' : 'text-on-surface-variant hover:scale-110'}`}
+          className={`p-3 rounded-full transition-all duration-500 ${
+            activeTab === "check"
+              ? "bg-primary text-on-primary scale-110"
+              : "text-on-surface-variant hover:scale-110"
+          }`}
         >
           <CheckCircle size={24} strokeWidth={1.5} />
         </button>

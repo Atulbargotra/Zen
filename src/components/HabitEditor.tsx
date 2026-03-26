@@ -27,7 +27,11 @@ export default function HabitEditor({ onClose, onSave, onDelete, initialHabit }:
   const [endTime, setEndTime] = useState(initialHabit?.endTime || '22:00');
 
   const handleSave = () => {
-    if (!name) return;
+    if (!name) {
+      haptics.error();
+      return;
+    }
+
     onSave({
       id: initialHabit?.id || Math.random().toString(36).substr(2, 9),
       title: name,
@@ -38,6 +42,7 @@ export default function HabitEditor({ onClose, onSave, onDelete, initialHabit }:
       startTime,
       endTime,
     });
+    haptics.success();
   };
 
   const handleDelete = () => {
