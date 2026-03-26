@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Bell, BellOff, CheckCircle } from 'lucide-react';
 import Layout from './components/Layout';
 import RitualCard, { RitualType } from './components/RitualCard';
@@ -125,6 +125,10 @@ function statusCopy(status: NotificationStatus) {
   }
 }
 
+function getVisibleHomeRituals(rituals: Ritual[]) {
+  return rituals.filter((ritual) => ritual.current < ritual.total);
+}
+
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState<'home' | 'list' | 'check'>('home');
@@ -231,6 +235,8 @@ export default function App() {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
   }
 
+  const visibleHomeRituals = getVisibleHomeRituals(rituals);
+
   return (
     <>
       <Layout
@@ -245,58 +251,127 @@ export default function App() {
               <h2 className="text-6xl leading-none tracking-[-0.04em] text-primary md:text-8xl">The Rituals</h2>
             </section>
 
-            <section className="rounded-[2rem] border border-outline-variant/40 bg-surface-container-low px-6 py-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-2">
-                  <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Reminder Status</p>
-                  <h3 className="text-2xl font-bold tracking-tight">
-                    {notificationStatus === 'granted' ? 'Notifications active' : 'Notifications need setup'}
-                  </h3>
-                  <p className="max-w-md text-sm text-on-surface-variant">{statusCopy(notificationStatus)}</p>
-                </div>
-                <div className="rounded-full border border-outline-variant/50 p-3 text-primary">
-                  {notificationStatus === 'granted' ? <Bell size={22} /> : <BellOff size={22} />}
-                </div>
-              </div>
-
-              {notificationStatus !== 'granted' && notificationStatus !== 'denied' && (
-                <button
-                  onClick={() => void handleEnableNotifications()}
-                  className="mt-5 rounded-full bg-primary px-5 py-3 text-sm font-medium text-on-primary transition-transform duration-300 active:scale-95"
+            <AnimatePresence initial={false}>
+              {notificationStatus !== 'granted' && (
+                <motion.section
+                  key="notification-status"
+                  layout
+                  initial={{ opacity: 0, y: 24, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -28, height: 0, marginBottom: 0 }}
+                  transition={{ duration: 0.45, ease: [0.2, 0, 0, 1] }}
+                  className="overflow-hidden rounded-[2rem] border border-outline-variant/40 bg-surface-container-low px-6 py-5"
                 >
-                  Enable Reminders
-                </button>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Reminder Status</p>
+                      <h3 className="text-2xl font-bold tracking-tight">Notifications need setup</h3>
+                      <p className="max-w-md text-sm text-on-surface-variant">{statusCopy(notificationStatus)}</p>
+                    </div>
+                    <div className="rounded-full border border-outline-variant/50 p-3 text-primary">
+                      <BellOff size={22} />
+                    </div>
+                  </div>
+
+                  {notificationStatus !== 'denied' && (
+                    <button
+                      onClick={() => void handleEnableNotifications()}
+                      className="mt-5 rounded-full bg-primary px-5 py-3 text-sm font-medium text-on-primary transition-transform duration-300 active:scale-95"
+                    >
+                      Enable Reminders
+                    </button>
+                  )}
+                </motion.section>
               )}
-            </section>
+            </AnimatePresence>
 
-            <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
-              {rituals[0] && (
-                <div className="md:col-span-7">
-                  <RitualCard ritual={rituals[0]} onClick={() => handleRitualClick(rituals[0].id)} />
-                </div>
-              )}
-
-              <div className="hidden h-24 md:col-span-5 md:block" />
-              <div className="hidden h-24 md:col-span-2 md:block" />
-
-              <div className="md:col-span-6 md:-mt-32">
-                {rituals[1] && (
-                  <RitualCard ritual={rituals[1]} onClick={() => handleRitualClick(rituals[1].id)} />
+            <motion.div layout className="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
+              <AnimatePresence initial={false}>
+                {visibleHomeRituals[0] && (
+                  <motion.div
+                    key={visibleHomeRituals[0].id}
+                    layout
+                    initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -28, scale: 0.94 }}
+                    transition={{ duration: 0.45, ease: [0.2, 0, 0, 1] }}
+                    className="md:col-span-7"
+                  >
+                    <RitualCard
+                      ritual={visibleHomeRituals[0]}
+                      onClick={() => handleRitualClick(visibleHomeRituals[0].id)}
+                    />
+                  </motion.div>
                 )}
-              </div>
 
-              <div className="md:col-span-5">
-                {rituals[2] && (
-                  <RitualCard ritual={rituals[2]} onClick={() => handleRitualClick(rituals[2].id)} />
+                {visibleHomeRituals.length > 1 && (
+                  <motion.div
+                    key="spacer-a"
+                    layout
+                    exit={{ opacity: 0, y: -16 }}
+                    transition={{ duration: 0.35, ease: [0.2, 0, 0, 1] }}
+                    className="hidden h-24 md:col-span-5 md:block"
+                  />
                 )}
-              </div>
+                {visibleHomeRituals.length > 2 && (
+                  <motion.div
+                    key="spacer-b"
+                    layout
+                    exit={{ opacity: 0, y: -16 }}
+                    transition={{ duration: 0.35, ease: [0.2, 0, 0, 1] }}
+                    className="hidden h-24 md:col-span-2 md:block"
+                  />
+                )}
 
-              {rituals.slice(3).map((ritual) => (
-                <div key={ritual.id} className="md:col-span-6">
-                  <RitualCard ritual={ritual} onClick={() => handleRitualClick(ritual.id)} />
-                </div>
-              ))}
-            </div>
+                {visibleHomeRituals[1] && (
+                  <motion.div
+                    key={visibleHomeRituals[1].id}
+                    layout
+                    initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -28, scale: 0.94 }}
+                    transition={{ duration: 0.45, ease: [0.2, 0, 0, 1] }}
+                    className="md:col-span-6 md:-mt-32"
+                  >
+                    <RitualCard
+                      ritual={visibleHomeRituals[1]}
+                      onClick={() => handleRitualClick(visibleHomeRituals[1].id)}
+                    />
+                  </motion.div>
+                )}
+
+                {visibleHomeRituals[2] && (
+                  <motion.div
+                    key={visibleHomeRituals[2].id}
+                    layout
+                    initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -28, scale: 0.94 }}
+                    transition={{ duration: 0.45, ease: [0.2, 0, 0, 1] }}
+                    className="md:col-span-5"
+                  >
+                    <RitualCard
+                      ritual={visibleHomeRituals[2]}
+                      onClick={() => handleRitualClick(visibleHomeRituals[2].id)}
+                    />
+                  </motion.div>
+                )}
+
+                {visibleHomeRituals.slice(3).map((ritual) => (
+                  <motion.div
+                    key={ritual.id}
+                    layout
+                    initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -28, scale: 0.94 }}
+                    transition={{ duration: 0.45, ease: [0.2, 0, 0, 1] }}
+                    className="md:col-span-6"
+                  >
+                    <RitualCard ritual={ritual} onClick={() => handleRitualClick(ritual.id)} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           </div>
         )}
 
