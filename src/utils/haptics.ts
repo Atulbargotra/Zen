@@ -17,6 +17,14 @@ function trigger(preset: Preset) {
   void getHaptics()?.trigger(preset);
 }
 
+function vibrate(duration: number) {
+  if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') {
+    return;
+  }
+
+  navigator.vibrate(duration);
+}
+
 export const haptics = {
   supported() {
     return WebHaptics.isSupported;
@@ -38,5 +46,8 @@ export const haptics = {
   },
   error() {
     trigger('error');
+  },
+  scrubTick() {
+    vibrate(12);
   },
 };

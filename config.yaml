@@ -1,0 +1,9 @@
+tunnel: 44cb0a5b-1a0e-4576-9245-816392ae5ca1
+credentials-file: /Users/atul/.cloudflared/44cb0a5b-1a0e-4576-9245-816392ae5ca1.json
+
+ingress:
+  - hostname: atulverma.xyz
+    service: http://localhost:3000
+  - hostname: www.atulverma.xyz
+    service: http://localhost:3000
+  - service: http_status:404

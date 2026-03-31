@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Home, List, CheckCircle, Settings, Menu, Plus } from "lucide-react";
+import { Home, List, CheckCircle, Plus } from "lucide-react";
 import { haptics } from "../utils/haptics";
 
 interface LayoutProps {
@@ -23,15 +23,9 @@ export default function Layout({
       {/* Header */}
       <header className="sticky top-0 z-40 bg-surface/80 backdrop-blur-xl border-b border-black/5">
         <div className="max-w-screen-xl mx-auto px-6 py-4 flex justify-between items-center">
-          {/*<button className="p-2 hover:opacity-70 transition-opacity cubic-bezier-transition">
-            <Menu size={24} strokeWidth={1.5} />
-          </button>*/}
           <h1 className="text-primary font-black tracking-tighter text-2xl">
             Zen Reminders
           </h1>
-          {/*<button className="p-2 hover:opacity-70 transition-opacity cubic-bezier-transition">
-            <Settings size={24} strokeWidth={1.5} />
-          </button>*/}
         </div>
       </header>
 
@@ -61,7 +55,7 @@ export default function Layout({
             onAddClick?.();
             haptics.light();
           }}
-          className="fixed bottom-24 right-8 md:bottom-12 md:right-12 w-16 h-16 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-[0px_20px_40px_rgba(0,0,0,0.15)] z-50"
+          className="fixed bottom-25 right-8 md:bottom-13 md:right-12 w-16 h-16 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-[0px_20px_40px_rgba(0,0,0,0.15)] z-50"
         >
           <Plus size={32} strokeWidth={1.5} />
         </motion.button>
